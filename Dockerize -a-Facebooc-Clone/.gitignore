@@ -1,0 +1,5 @@
+*.o
+*.d
+*.a
+bin/*
+db.sqlite3
