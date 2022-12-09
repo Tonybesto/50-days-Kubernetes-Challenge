@@ -1,0 +1,48 @@
+version: '3.8'
+
+networks:
+  custom:
+
+services:
+  vote:
+    image: schoolofdevops/vote:v1
+    ports:
+      - 80:80
+    depends_on: 
+      - redis
+    networks:
+      - custom
+  
+  redis:
+    image: redis:alpine
+    networks:
+      - custom
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - custom
+
+
+  worker:
+    image: schoolofdevops/worker:latest
+    depends_on:
+      - db
+      - redis
+    networks:
+      - custom
+
+  result:
+    image: schoolofdevops/vote-result
+    ports:
+      - 81:80
+    depends_on:
+      - db
+    networks:
+      - custom
